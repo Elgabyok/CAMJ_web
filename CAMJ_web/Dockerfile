@@ -1,5 +1,5 @@
 # Imagen base de .NET SDK para compilar
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copiamos los archivos del proyecto
