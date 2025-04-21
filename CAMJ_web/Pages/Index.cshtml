@@ -1,0 +1,40 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio de Sesión";
+}
+<div class="text-center">
+    <h1 class="display-4">Bienvenido</h1>
+    <p></p>
+</div>
+
+<div class="text-center">    
+    <p>Ingrese su correo electrónico y clave para continuar.</p>
+    <form method="post">
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" asp-for="Email" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="clave" class="form-label">Clave</label>
+            <input type="password" asp-for="Clave" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger mt-3">@Model.ErrorMessage</div>
+    }
+    
+    @if (ViewData["LoginExitoso"] != null)
+    {
+        <script>
+            console.log("🚀 Redireccionando a Principal desde el frontend...");
+            window.location.href = "/Principal";
+        </script>
+    }
+
+</div>

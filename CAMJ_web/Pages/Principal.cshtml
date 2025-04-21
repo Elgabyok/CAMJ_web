@@ -1,0 +1,112 @@
+﻿@page
+@model PrincipalModel
+@{
+    ViewData["Title"] = "Movimientos";
+}
+
+<h2>Movimientos</h2>
+
+<form id="filtroForm" method="get">
+    <label>Seleccione el año:</label>
+    <select asp-for="AnioSeleccionado" asp-items="Model.AniosDisponibles"></select>
+    <button type="submit" id="btnFiltrar">Filtrar</button>
+</form>
+
+<!-- Indicador de carga -->
+<div id="loadingIndicator" style="display:none;">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+<div class="info-box">
+    <h4>@Model.NombreUsuario</h4>
+    <p><strong>Matrícula:</strong> @Model.MatriculaUsuario</p>
+</div>
+<div class="info-box">    
+    <p><strong>Aportes:</strong> @Model.CantidadAportes</p>
+    <p><strong>Total:</strong> @Model.TotalImportePagado.ToString("C")</p>
+</div>
+
+<script>
+    function mostrarCargando() {
+        document.getElementById('loadingIndicator').style.display = 'block';
+    }
+
+    function ocultarCargando() {
+        document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado');
+
+        // Manejar el clic en el botón de filtrado
+        var btnFiltrar = document.getElementById('btnFiltrar');
+        if (btnFiltrar) {
+            console.log('Botón de filtrado encontrado');
+            btnFiltrar.addEventListener('click', function() {
+                console.log('Clic en botón de filtrado detectado');
+                mostrarCargando();
+
+                // Programar un segundo clic automático después de un breve retraso
+                setTimeout(function() {
+                    console.log('Ejecutando segundo clic automático');
+                    btnFiltrar.click();
+                }, 500); // 1 segundo de retraso
+            });
+        } else {
+            console.log('ERROR: Botón de filtrado no encontrado');
+        }
+
+        // Configurar doble clic en tabla para navegación a detalles
+        var tabla = document.querySelector('table.table tbody');
+        console.log('Tabla encontrada:', tabla);
+
+        if (tabla) {
+            tabla.addEventListener('dblclick', function(e) {
+                console.log('Doble clic detectado', e.target);
+                if (e.target.tagName === 'TD') {
+                    console.log('Celda detectada');
+                    var fila = e.target.parentNode;
+                    var idComprobante = fila.cells[1].textContent; // Asumiendo que la segunda columna es ID Comprobante
+                    console.log('ID Comprobante:', idComprobante);
+
+                    // Redirigir a la página de detalles
+                    window.location.href = '/Detalle?id=' + encodeURIComponent(idComprobante);
+                }
+            });
+        } else {
+            console.log('ERROR: Tabla no encontrada');
+        }
+    });
+
+    // Ocultar el indicador de carga cuando la página termina de cargar
+    window.onload = function() {
+        ocultarCargando();
+    };
+</script>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>ID Comprobante</th>
+            <th>Carátula</th>
+            <th>Expediente</th>
+            <th>Importe</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (System.Data.DataRow row in Model.Movimientos.Rows)
+        {
+            <tr>
+                <td>@(((DateTime)row["fecha"]).ToString("dd/MM/yyyy"))</td>
+                <td>@row["idComprobante"]</td>
+                <td>@row["caratula"]</td>
+                <td>@row["expediente"]</td>
+                <td>@row["importe"]</td>
+                <td>@row["estado"]</td>
+            </tr>
+        }
+    </tbody>
+</table>
