@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class PrincipalModel : PageModel
 {
+    
     private readonly IConfiguration _configuration;
 
     public PrincipalModel(IConfiguration configuration)
@@ -19,18 +20,22 @@ public class PrincipalModel : PageModel
     
     [BindProperty(SupportsGet = true)]
     public string AnioSeleccionado { get; set; } = "TODOS";
-    public string NombreUsuario { get; set; }
-    public string MatriculaUsuario { get; set; }
+    public string MatriculaUsuario { get; set; } = "Sin matrícula";
+    public string NombreUsuario { get; set; } = "Usuario desconocido";
 
-      public async Task OnGetAsync()
+
+
+    public void OnGet()
     {
+        Console.WriteLine("🚀 Principal.cshtml ha recibido la solicitud inmediatamente");
+        
         MatriculaUsuario = HttpContext.Session.GetString("matricula") ?? "Sin matrícula";
         NombreUsuario = HttpContext.Session.GetString("nombre") ?? "Usuario desconocido";
 
         Console.WriteLine($"Accediendo con matrícula: {MatriculaUsuario} - Nombre: {NombreUsuario}");
-
+        
         CargarAnios();
-        CargarMovimientos();
+        CargarMovimientos();        
     }
 
       

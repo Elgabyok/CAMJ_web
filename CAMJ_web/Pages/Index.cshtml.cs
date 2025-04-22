@@ -14,12 +14,13 @@ namespace CAMJ_web.Pages
         }
 
         [BindProperty]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [BindProperty]
-        public string Clave { get; set; }
+        public required string Clave { get; set; }
 
-        public string ErrorMessage { get; set; }
+        [BindProperty]
+        public string? ErrorMessage { get; set; }
 
         public void OnGet() { }
 
@@ -29,7 +30,7 @@ namespace CAMJ_web.Pages
             {
                 ErrorMessage = "Ingrese su correo y clave.";
                 return Page();
-            }            
+            }
 
             string cadenaConexion = _configuration.GetConnectionString("SupabaseConnection") ?? string.Empty;
 
@@ -47,19 +48,16 @@ namespace CAMJ_web.Pages
                     {
                         if (reader.Read())
                         {
-                            string matricula = reader["matricula"].ToString();
-                            string nombre = reader["nombre"].ToString();
-
+                            string matricula = reader["matricula"]?.ToString() ?? "Sin matrícula";
                             HttpContext.Session.SetString("matricula", matricula);
+                            string nombre = reader["nombre"]?.ToString() ?? "Nombre desconocido";
                             HttpContext.Session.SetString("nombre", nombre);
+                                                       
+                            Console.WriteLine($"✅ Login exitoso - Matricula: {matricula}, Nombre: {nombre}");
 
-                            Console.WriteLine($"Login exitoso - Matricula: {matricula}, Nombre: {nombre}");
-                            
-
-                            HttpContext.Session.Remove("intentosLogin"); // 🔥 Limpiar el contador tras éxito
-
-                            Console.WriteLine("🚀 Backend ha enviado redirección a Principal...");
-                            return Redirect("/Principal");
+                            // 👉 En lugar de redireccionar, establecemos ViewData
+                            ViewData["LoginExitoso"] = true;
+                            return Page(); // 🔥 Esto muestra la vista y permite que se renderice el enlace
                         }
                         else
                         {
